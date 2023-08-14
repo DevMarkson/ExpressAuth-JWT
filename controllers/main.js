@@ -8,7 +8,7 @@ const dotenv = require('dotenv');
 // Load config
 dotenv.config({ path: './config/config.env' });
 
-const CustomAPIError = require('../errors/custom-error');
+const {BadRequestError} = require('../errors');
 const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -19,7 +19,7 @@ const login = async (req, res) => {
     // Joi
 
     if (!username || !password){
-        throw new CustomAPIError('Please provide email and password', 400)
+        throw new BadRequestError('Please provide email and password')
     }
     const id = new Date().getDate()
 
@@ -31,9 +31,17 @@ const login = async (req, res) => {
 
 
 const dashboard = async (req, res) => {
+    // console.log(req.headers);
+    // console.log(req.user);
+
     const luckyNumber = Math.floor(Math.random() * 100)
-    res.status(200).json({ msg: `Hello, John Doe`, secret: `Here is your authorized data, your lucky number is ${luckyNumber}` })
-}
+
+
+    res.status(200).json({ 
+        msg: `Hello, ${req.user.username}`, 
+        secret: `Here is your authorized data, your lucky number is ${luckyNumber}`});    } 
+
+
 
 module.exports = {
     login, dashboard,
